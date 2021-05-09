@@ -1,0 +1,5 @@
+2021/05/09 18:17:37 [emerg] 2220#10724: bind() to 0.0.0.0:8080 failed (10013: An attempt was made to access a socket in a way forbidden by its access permissions)
+2021/05/09 18:17:38 [emerg] 21248#8196: bind() to 0.0.0.0:8080 failed (10013: An attempt was made to access a socket in a way forbidden by its access permissions)
+2021/05/09 18:23:35 [emerg] 23280#22772: unexpected end of file, expecting "}" in D:\2021Spring\Vue\code\review-visualization-tool\nginx-1.18.0/conf/nginx.conf:129
+2021/05/09 18:26:10 [error] 14156#23632: *1 CreateFile() "D:\2021Spring\Vue\code\review-visualization-tool\nginx-1.18.0/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2021/05/09 18:40:00 [error] 23632#7860: *3 CreateFile() "D:\2021Spring\Vue\code\review-visualization-tool\nginx-1.18.0/html/:aaa000/api/rank" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "POST /:aaa000/api/rank HTTP/1.1", host: "127.0.0.1:aaa000"
