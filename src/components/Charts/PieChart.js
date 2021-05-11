@@ -29,7 +29,18 @@ export default {
   //   };
   // },
 
-  // methods: {
+  methods: {
+    reloadChart(){
+      // alert("yes")
+      this.renderChart(this.data, {
+        borderWidth: "0px",
+        hoverBackgroundColor: "red",
+        hoverBorderWidth: "0px",
+        options:{
+          radius:"30%"
+        }
+      });
+    },
   //   updateGradients(chartData) {
   //     if(!chartData) return;
   //     const ctx = this.ctx || document.getElementById(this.chartId).getContext('2d');
@@ -42,8 +53,7 @@ export default {
   //       set.backgroundColor = gradientStroke;
   //     });
   //   }
-  // },
-
+  },
   mounted() {
     // this.$watch('chartData', (newVal, oldVal) => {
     //   this.updateGradients(newVal);

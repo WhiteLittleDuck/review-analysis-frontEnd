@@ -27,6 +27,14 @@ export default {
     };
   },
   methods: {
+    reloadChart(){
+      //alert("comein")
+      this.renderChart(
+
+        this.chartData,
+        this.extraOptions
+      );
+    },
     updateGradients(chartData) {
       if(!chartData) return;
       const ctx = this.ctx || document.getElementById(this.chartId).getContext('2d');
