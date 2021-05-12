@@ -228,7 +228,7 @@
 <script>
 import axios from "axios";
 import { BaseAlert } from '@/components';
-import NotificationTemplate from './Notifications/NotificationTemplate';
+import AppNotFound from './Notifications/AppNotFound';
 import LineChart from "@/components/Charts/LineChart";
 import PieChart from "@/components/Charts/PieChart";
 import BaseTable from "@/components/BaseTable";
@@ -322,8 +322,8 @@ export default {
   methods: {
     notifyVue() {
       this.$notify({
-          component: NotificationTemplate,
-          icon: "tim-icons icon-bell-55",
+          component: AppNotFound,
+          // icon: "tim-icons icon-bell-55",
           horizontalAlign: 'center',
           verticalAlign: 'top',
           type: "warning",

@@ -1,0 +1,9 @@
+<template>
+  <div>The APP ID/ APP Name not found! Please try another</div>
+</template>
+
+<script>
+  export default {
+    name: 'notification-app-not-found'
+  }
+</script>

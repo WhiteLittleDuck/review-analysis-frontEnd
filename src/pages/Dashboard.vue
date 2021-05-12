@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <div class="col-12">
-        <card type="chart">
+        <card type="chart" class="text-center">
           <template slot="header">
             <div class="row">
               <div class="col-sm-6" :class="isRTL ? 'text-right' : 'text-left'">
@@ -21,8 +21,8 @@
                             slot="title"
                             href="#/dashboard"
                             class="dropdown-toggle nav-link float-left"
-                            data-toggle="dropdown">                            
-                            <i class="tim-icons icon-settings-gear-63"></i>
+                            data-toggle="dropdown">                         
+                            <i class="tim-icons icon-settings-gear-63 text-success"></i>
                           </a>
                           <li class="nav-link">
                             <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(0)">count</a>
@@ -52,7 +52,7 @@
                     <label
                       v-for="(option, index) in rankCategory"
                       :key="option"
-                      class="btn btn-sm btn-primary btn-simple"
+                      class="btn btn-sm btn-success btn-simple"
                       :class="{ active: rankTable.activeIndex === index }"
                       :id="index"
                     >
@@ -62,6 +62,7 @@
                         name="options"
                         autocomplete="on"
                         :checked="rankTable.activeIndex === index"
+                        :disabled="rankTable.fix"
                       />
                       {{ option }}
                     </label>
@@ -108,7 +109,29 @@
               </div>
             </card>
           </div>
-          <!-- <base-button block type="primary">More</base-button> -->
+          <div>
+          </div>
+          <div class="row" >
+            <div class="col"> 
+              <!-- <base-button link type="success" >previous</base-button> -->
+            </div>
+            <div class="col">
+              <div class = "row" >
+                <div class="col">
+                  <base-button link type="success" :disabled="page<=1" @click="changePage(page-1)">previous</base-button>
+                </div>
+                <div class="col">
+                  <base-input :value="page" v-model="page" @keyup.enter="changePage(page)"></base-input>
+                </div>
+                <div class="col">
+                  <base-button link type="success" :disabled="page>=appPage" @click="changePage(page+1)">next</base-button>
+                </div>
+              </div>
+            </div>
+            <div class="col"> 
+              <!-- <base-button link type="primary" >next</base-button> -->
+            </div>
+          </div>
         </card>
       </div>
     </div>
@@ -116,19 +139,26 @@
 </template> 
 <script>
 import axios from "axios";
+import PageNotANumber from './Notifications/PageNotANumber';
+import PageNumberInvalid from './Notifications/PageNumberInvalid';
 import BaseTable from "@/components/BaseTable";
-import * as chartConfigs from "@/components/Charts/config";
-import config from "@/config";
 import Card from "../components/Cards/Card.vue";
+import BaseInput from '../components/Inputs/BaseInput.vue';
+import BaseButton from '../components/BaseButton.vue';
 
 export default {
   components: {
     BaseTable,
     Card,
+    BaseButton,
+    PageNotANumber,
+    PageNumberInvalid,
   },
   data() {
+    BaseInput
     return {
-      hi:"aaa",
+      appPage: 295,
+      keyPage: 11,
       sort:{
         orderRule: ["total count", "positive rate", "negative rate", "UI related rate"],
         typeRule: ["App","Key"],
@@ -136,10 +166,13 @@ export default {
         type: 0,
       },
       
+      page: 1,
+      prepage: 1,
       //Rank table
       rankTable: {
         allData: [],
         activeIndex: 0,
+        fix:false,
         tableData: {},
       },
       //rank table end
@@ -157,6 +190,22 @@ export default {
     },
   },
   methods: {
+    notifyVue(type) {
+      var com = PageNotANumber;
+      if(type==1){
+        com=PageNumberInvalid;
+      }
+      this.$notify({
+          component: com,
+          // icon: "tim-icons icon-bell-55",
+          horizontalAlign: 'center',
+          verticalAlign: 'top',
+          type: "danger",
+          timeout: 0
+      });
+      this.page=this.prepage;
+      // alert(this.page);
+    },
     //rank initialization
     initRankeTable(index) {
       this.sort.type=index;
@@ -166,16 +215,40 @@ export default {
       this.rankTable.activeIndex = index;
     },
     //jump from detail button
-    detail(appid) {
+    detail(thisId) {
       // alert(id)
       if (this.rankTable.activeIndex == 0) {
         //jump to App
-          this.$router.push({name:'icons',params: {id:appid}});      
+          this.$router.push({name:'icons',params: {id:thisId}});      
           //this.$router.push({path:'/icons',query: {id:'1'}})
         // this.$router.reload();
       } else {
-        this.$router.push("/maps");
+        this.$router.push({name:'maps',params: {id:thisId}});//{name: "/maps",});
         // this.$router.reload();
+      }
+    },
+    changePage(newPage){
+      //check number
+      //var reg = /^[0-9]+\.?[0-9]*$/;
+      if (!/^\d+$/.test(newPage)) {
+          this.notifyVue(0);
+          // alert("not an positive integer number!");
+      }else{
+        var num = parseInt(newPage);
+        if(num<=0||num>this.appPage){
+          this.notifyVue(1);
+          // alert("the valid page number is from 0 to 295! ")
+        }else{
+          if(num>this.keyPage){
+            this.initRankeTable(0);
+            this.rankTable.fix=true;
+          }else{
+            this.rankTable.fix=false;
+          }
+          this.page=num;
+          this.prepage=num;
+          this.getRankInfo();
+        }
       }
     },
     changeSort(index){
@@ -186,7 +259,7 @@ export default {
     getRankInfo(){
       // get rank table info
      var that = this;
-     axios.get("/api/rank?order="+that.sort.order).then(
+     axios.get("/api/rank?order="+that.sort.order+"&page="+that.page).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             that.rankTable.allData=[response.data["data"]["app"],response.data["data"]["key"]];
