@@ -108,7 +108,7 @@
               </div>
             </card>
           </div>
-          <base-button block type="primary">More</base-button>
+          <!-- <base-button block type="primary">More</base-button> -->
         </card>
       </div>
     </div>
@@ -134,7 +134,6 @@ export default {
         typeRule: ["App","Key"],
         order: 0,
         type: 0,
-        size: 10
       },
       
       //Rank table
@@ -160,6 +159,7 @@ export default {
   methods: {
     //rank initialization
     initRankeTable(index) {
+      this.sort.type=index;
       // alert(index)
       let tableData = this.rankTable.allData[index];
       this.rankTable.tableData = tableData;
@@ -186,14 +186,11 @@ export default {
     getRankInfo(){
       // get rank table info
      var that = this;
-     axios.get("/api/rank?order="+that.sort.order+"&size=10").then(
+     axios.get("/api/rank?order="+that.sort.order).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
-            // alert("hihi");
-            var a = [response.data["data"]["app"],response.data["data"]["key"]];
-            // console.log(a);
             that.rankTable.allData=[response.data["data"]["app"],response.data["data"]["key"]];
-            that.initRankeTable(0);
+            that.initRankeTable(that.sort.type);
           }else{
             alert("something goes wrong!");
           }

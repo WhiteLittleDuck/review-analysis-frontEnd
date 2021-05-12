@@ -47,7 +47,7 @@
             <a :href="appInfo.link" class="card-link">Google Play</a>
           </div>
           <div class="col">
-            <a href="#/icons" class="card-link" @click="download">Download</a>
+            <a :href="'/api/download?type=app&id='+appid" class="card-link">Download</a>
           </div>
           <!-- <p>{{ this.aaa }}</p> -->
         </div>
@@ -114,8 +114,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="download"
-                >switch</base-button>
+              <base-button size="sm" type="primary" @click="switchFunc(0)" >switch</base-button>
             </div>
           </card>
         </div>
@@ -135,7 +134,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" 
+              <base-button size="sm" type="primary" @click="switchFunc(1)"
                 >switch</base-button>
             </div>
 
@@ -228,6 +227,8 @@
 </template>
 <script>
 import axios from "axios";
+import { BaseAlert } from '@/components';
+import NotificationTemplate from './Notifications/NotificationTemplate';
 import LineChart from "@/components/Charts/LineChart";
 import PieChart from "@/components/Charts/PieChart";
 import BaseTable from "@/components/BaseTable";
@@ -235,14 +236,14 @@ import * as chartConfigs from "@/components/Charts/config";
 import config from "@/config";
 
 export default {
-  components: {
+  components: {BaseAlert,
     LineChart,
     PieChart,
     BaseTable,
   },
   data() {
     return {
-      appid:"",
+      appid:"12345",
       searchInput:"",
       //table
       tableData:[],
@@ -319,13 +320,35 @@ export default {
     },
   },
   methods: {
-    download(){
-      // chartD.datasets[0]["data"][0]=1;
-      console.log(this.chartData.datasets[0]["data"])
-      console.log(this.trendChart.trendData.datasets[0].data);
+    notifyVue() {
+      this.$notify({
+          component: NotificationTemplate,
+          icon: "tim-icons icon-bell-55",
+          horizontalAlign: 'center',
+          verticalAlign: 'top',
+          type: "warning",
+          timeout: 0
+      });
+    },
+    switchFunc(type){
+      var that = this;
+      axios.get("/api/app/switch?type="+type).then(
+        function (response) {
+          console.log(response.data);
 
-      
-      console.log(this.chartData)
+          if (response.data["meta"]["status"] == 200) {
+            if(type==0){
+              that.exampleData.pos=response.data["data"];
+            }else{
+              that.exampleData.neg=response.data["data"];
+            }
+            // that.tableData = response.data["data"]["info"];
+          }else{
+            //alert("app rank wrong！");
+          }
+        },
+        function (err) {}
+      );
     },
     changeSort(index){
       // alert("here");
@@ -342,8 +365,6 @@ export default {
       var that = this;
       axios.get("/api/app?id="+appid).then(
         function (response) {
-          //console.log(response.data);
-
           if (response.data["meta"]["status"] == 200) {
             var info = response.data["data"]["info"];
             //set app info
@@ -370,7 +391,8 @@ export default {
               that.appid=appid;
             }
           }else{
-            alert("app info wrong!");
+            that.notifyVue();
+            //alert("app info wrong!");
           }
         },
       function (err) {}
@@ -380,12 +402,10 @@ export default {
       var that = this;
       axios.get("/api/app/rank?id="+appid+"&order="+that.sort.order).then(
         function (response) {
-          console.log(response.data);
-
           if (response.data["meta"]["status"] == 200) {
             that.tableData = response.data["data"]["info"];
           }else{
-            alert("app rank wrong！");
+            //alert("app rank wrong！");
           }
         },
         function (err) {}
