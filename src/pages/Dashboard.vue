@@ -93,8 +93,8 @@
                     <td class="text-center">{{ row.total }}</td>
                     <td class="text-center">{{ row.positive }}</td>
                     <td class="text-center">{{ row.negative }}</td>
-                    <td class="text-center">{{ row.rate }}</td>
-                    <td class="text-center">{{ row.UIrate }}</td>
+                    <td class="text-center">{{ row.rate }}%</td>
+                    <td class="text-center">{{ row.UIrate }}%</td>
                     <td class="td-actions text-center">
                       <base-button
                         class="animation-on-hover"

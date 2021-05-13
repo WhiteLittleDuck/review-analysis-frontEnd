@@ -2,24 +2,50 @@
   <div>
     <div>
       <card>
-        <modal
-          class="modal-search"
-          id="searchModal"
-          :centered="false"
-          :show-close="true"
-        >
-          <!-- <input slot="header" type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH FOR APP NAME/APP ID" icon="tim-icons icon-chart-pie-36"> -->
-          <base-input
-            addon-left-icon="tim-icons icon-zoom-split"
-            placeholder="SEARCH BY APP ID"
-            v-model="searchInput"
-            @keyup.enter="searchApp(searchInput)"
-          >
-          </base-input>
-        </modal>
+                      <!-- <base-button @click="test">test</base-button> -->
+
+        <div class="row">
+          <div class="col-lg-10">
+            <base-input
+              addon-left-icon="tim-icons icon-zoom-split"
+              :placeholder="'SEARCH BY '+ searchOption.searchRule[searchOption.type]"
+              v-model="searchOption.searchInput"
+              @keyup.enter="searchApp(searchOption.searchInput)">
+            </base-input>
+          </div>
+          <div class="col-lg-2">
+            <div>
+              <base-dropdown menu-classes="dropdown-black"
+                title-classes="btn btn-secondary"
+                :title="searchOption.searchRule[searchOption.type]">
+              <a class="dropdown-item" href="#/icons" @click="searchOption.type=0">App Name</a>
+              <a class="dropdown-item" href="#/icons" @click="searchOption.type=1">App ID</a>
+              </base-dropdown>
+              <modal :show.sync="searchOption.modal">
+                <h3 slot="header" class="modal-title" id="modal-title-default">All Availabel Keywords</h3>
+
+                <p>alignment, clarity, column, combination, design, layer, layout, look, position, row, scale, 
+                shape, space, structure, style, UI, alert ,button, checkbox, confirm, dropdown, element, 
+                exploration, form, icon, input, load, menu, message, navigation, notification, picker, 
+                progress, radio, result, search, select, slider, spin, step, appearance, bar, baseline, 
+                bold, brightness, composition, consistency, distance, RGB, blindness, edge, emblem, footer, 
+                gradient, grayscale, grid, hierarchy, hover, interface, italic, kerning, logo, mark, monochromatic, 
+                opacity, overlap, pattern, pixel, proximity, round corner, saturation, scheme, serif, shade, 
+                symbol, theme, tint, tone, typography, visibility, weight, widget, wireframe, switch, tab, 
+                table, toggle, background, color, contrast, font, header, height, image, line, paragraph, 
+                photo, shadow, size, text, title</p>
+                <template slot="footer">
+                  <base-button type="secondary" class="ml-auto" @click="modal = false">Close</base-button>
+                </template>
+              </modal>
+            </div>
+          </div>
+        </div>
       </card>
     </div>
     <div>
+      <div class="row">
+        <div class="col-lg-10">
       <card>
         <h4 class="card-title">{{appInfo.name}}</h4>
         <h6 class="card-subtitle mb-2 text-muted">APP ID: {{appInfo.id}}</h6>
@@ -40,7 +66,7 @@
            <!-- <p class="card-text"></p> -->
           </div>
         </div>
-        <div class="row float-right" style="padding-top: 0px">
+        <div class="row float-right" style="padding-top: 10px">
           <!-- <base-button round type="primary">Primary</base-button>
       <base-button round type="primary">Primary</base-button> -->
           <div class="col" style="width: 150px">
@@ -52,6 +78,16 @@
           <!-- <p>{{ this.aaa }}</p> -->
         </div>
       </card>
+        </div>
+        <div class="col-lg-2">
+          <card >
+          <img slot="image" class="card-img-top" :src="appInfo.icon" alt="Card image cap"/>
+          <!-- <h4 class="card-title">Card title</h4>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </card>
+        </div>
+      </div>
 
       <div class="row">
         <div class="col-12">
@@ -100,9 +136,7 @@
             <h4 class="card-title">Positive Example</h4>
             <h6 class="card-subtitle mb-2 text-muted">
               review given score: {{exampleData.pos.score}} / 5
-              <!-- positive review example for keyword button -->
             </h6>
-            <!-- <p class="card-text">positive:</p> -->
             <blockquote class="blockquote mb-0">
               <p>
                 <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
@@ -227,8 +261,9 @@
 </template>
 <script>
 import axios from "axios";
-import { BaseAlert } from '@/components';
-import AppNotFound from './Notifications/AppNotFound';
+import { BaseAlert } from "@/components";
+import Modal from "@/components/Modal";
+import AppNotFound from "./Notifications/AppNotFound";
 import LineChart from "@/components/Charts/LineChart";
 import PieChart from "@/components/Charts/PieChart";
 import BaseTable from "@/components/BaseTable";
@@ -236,23 +271,23 @@ import * as chartConfigs from "@/components/Charts/config";
 import config from "@/config";
 
 export default {
-  components: {BaseAlert,
-    LineChart,
-    PieChart,
-    BaseTable,
-  },
+  components: { BaseAlert, LineChart, PieChart, BaseTable,Modal },
   data() {
     return {
-      appid:"12345",
-      searchInput:"",
+      appid: "12345",
       //table
-      tableData:[],
-      sort:{
+      tableData: [],
+      sort: {
         orderRule: ["total count", "positive rate", "negative rate"],
         order: 0,
-        size: 10
+        size: 10,
       },
-
+      searchOption:{
+        searchInput: "",
+        type:0,
+        searchRule:['App Name','App ID'],
+        modal:false,
+      },
       //Pie Chart Test
       chartOptions: {
         hoverBorderWidth: 20,
@@ -273,11 +308,11 @@ export default {
         ],
       },
 
-      appInfo:{},
+      appInfo: {},
 
-      exampleData:{
-        pos:{},
-        neg:{},
+      exampleData: {
+        pos: {},
+        neg: {},
       },
 
       trendChart: {
@@ -320,57 +355,64 @@ export default {
     },
   },
   methods: {
-    notifyVue() {
-      this.$notify({
-          component: AppNotFound,
-          // icon: "tim-icons icon-bell-55",
-          horizontalAlign: 'center',
-          verticalAlign: 'top',
-          type: "warning",
-          timeout: 0
+    test(){
+      let data = "Hello";
+      axios.post("/api/test",data)
+      .then(res=>{
+      console.log('res=>',res);            
       });
     },
-    switchFunc(type){
+    notifyVue() {
+      this.$notify({
+        component: AppNotFound,
+        // icon: "tim-icons icon-bell-55",
+        horizontalAlign: "center",
+        verticalAlign: "top",
+        type: "warning",
+        timeout: 0,
+      });
+    },
+    switchFunc(type) {
       var that = this;
-      axios.get("/api/app/switch?type="+type).then(
+      axios.get("/api/app/switch?type=" + type).then(
         function (response) {
           console.log(response.data);
 
           if (response.data["meta"]["status"] == 200) {
-            if(type==0){
-              that.exampleData.pos=response.data["data"];
-            }else{
-              that.exampleData.neg=response.data["data"];
+            if (type == 0) {
+              that.exampleData.pos = response.data["data"];
+            } else {
+              that.exampleData.neg = response.data["data"];
             }
             // that.tableData = response.data["data"]["info"];
-          }else{
+          } else {
             //alert("app rank wrong！");
           }
         },
         function (err) {}
       );
     },
-    changeSort(index){
+    changeSort(index) {
       // alert("here");
-    this.sort.order=index;
-    this.getAppRankInfo(this.appid);
+      this.sort.order = index;
+      this.getAppRankInfo(this.appid);
     },
-    searchApp(appid){
+    searchApp(appid) {
       // alert(appid);
       this.getAppInfo(appid);
       this.getAppRankInfo(appid);
-      this.searchInput="";
+      this.searchOption.searchInput = "";
     },
-    getAppInfo(appid){
+    getAppInfo(appid) {
       var that = this;
-      axios.get("/api/app?id="+appid).then(
+      axios.get("/api/app?id=" + appid).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             var info = response.data["data"]["info"];
             //set app info
-            that.appInfo=info;
+            that.appInfo = info;
             //set pie chart data
-            that.chartData.datasets[0]["data"]=[info["pos"],info["neg"]];
+            that.chartData.datasets[0]["data"] = [info["pos"], info["neg"]];
             that.$refs.pie.reloadChart();
 
             var data = [];
@@ -381,30 +423,30 @@ export default {
               label.push(response.data["data"]["version"][x]["version"]);
               data.push(response.data["data"]["version"][x]["rate"]);
             }
-            that.trendChart.trendData.datasets[0].data=data;
-            that.trendChart.trendData.labels=label;
+            that.trendChart.trendData.datasets[0].data = data;
+            that.trendChart.trendData.labels = label;
             that.$refs.linechart.reloadChart();
             //set pos and neg example
-            that.exampleData.pos=response.data["data"]["posExample"];
-            that.exampleData.neg=response.data["data"]["negExample"];
-            if(appid!=that.appid){
-              that.appid=appid;
+            that.exampleData.pos = response.data["data"]["posExample"];
+            that.exampleData.neg = response.data["data"]["negExample"];
+            if (appid != that.appid) {
+              that.appid = appid;
             }
-          }else{
+          } else {
             that.notifyVue();
             //alert("app info wrong!");
           }
         },
-      function (err) {}
+        function (err) {}
       );
     },
-    getAppRankInfo(appid){
+    getAppRankInfo(appid) {
       var that = this;
-      axios.get("/api/app/rank?id="+appid+"&order="+that.sort.order).then(
+      axios.get("/api/app/rank?id=" + appid + "&order=" + that.sort.order).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             that.tableData = response.data["data"]["info"];
-          }else{
+          } else {
             //alert("app rank wrong！");
           }
         },
@@ -415,13 +457,12 @@ export default {
   mounted() {
     //get appid from dashboard page
     this.appid = this.$route.params.id;
-    if (this.appid==null){
+    if (this.appid == null) {
       this.appid = "12345";
     }
 
     this.getAppInfo(this.appid);
     this.getAppRankInfo(this.appid);
-
 
     this.i18n = this.$i18n;
     if (this.enableRTL) {

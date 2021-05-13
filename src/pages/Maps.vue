@@ -3,18 +3,25 @@
     <div>
       <card>
         <div class="row">
-          <div class="col-lg-9">
+          <div class="col-lg-10">
         
           <base-input
             addon-left-icon="tim-icons icon-zoom-split"
-            placeholder="SEARCH KEYWORD"
+            :placeholder="'SEARCH BY '+searchOption.searchRule[searchOption.type]"
+            v-model="searchOption.searchInput"
+            @keyup.enter="searchKey(searchOption.searchInput)"
           >
           </base-input>
           </div>
-          <div class="col-lg-3">
+          <div class="col-lg-2">
             <div>
-           <base-button link type="primary" size="sm" @click="modal = true">possible keywords</base-button>
-                  <modal :show.sync="modal">
+          <base-dropdown menu-classes="dropdown-black"
+               title-classes="btn btn-secondary"
+               :title="searchOption.searchRule[searchOption.type]">
+            <a class="dropdown-item" href="#/maps" @click="searchOption.type=0">Keyword Text</a>
+            <a class="dropdown-item" href="#/maps" @click="searchOption.type=1">Keyword ID</a>
+          </base-dropdown>
+          <modal :show.sync="searchOption.modal">
             <h3 slot="header" class="modal-title" id="modal-title-default">All Availabel Keywords</h3>
 
             <p>alignment, clarity, column, combination, design, layer, layout, look, position, row, scale, 
@@ -41,6 +48,8 @@
     <div>
       <card>
         <h4 class="card-title">{{keywordInfo.name}}</h4>
+                  <h6 class="card-subtitle mb-2 text-muted">KEY ID: {{keywordInfo.id}}</h6>
+
         <div class="row">
           <div class="col">
            <p class="card-text">positive rank: {{keywordInfo.posRank}}</p>
@@ -180,6 +189,7 @@
 </template>
 <script>
 import axios from "axios";
+import KeyNotFound from "./Notifications/KeyNotFound";
 import Modal from "@/components/Modal";
 import BaseInput from "@/components/Inputs/BaseInput";
 import BarChart from "@/components/Charts/BarChart";
@@ -192,6 +202,7 @@ export default {
     BarChart,
     PieChart,
     BaseTable,
+    KeyNotFound,
     Modal,
   },
   data() {
@@ -203,8 +214,15 @@ export default {
         order: 0,
         size: 10
       },
-      modal:false,
       tableData:[],
+
+      searchOption:{
+        searchInput: "",
+        type:0,
+        searchRule:['Keyword Text','Keyword ID'],
+        modal:false,
+      },
+      // dropDownText="Keyword Text",
 
       //Pie Chart Test
       chartOptions: {
@@ -243,6 +261,16 @@ export default {
     },
   },
   methods: {
+    notifyVue() {
+      this.$notify({
+        component: KeyNotFound,
+        // icon: "tim-icons icon-bell-55",
+        horizontalAlign: "center",
+        verticalAlign: "top",
+        type: "warning",
+        timeout: 0,
+      });
+    },
     switchFunc(type){
       var that = this;
       axios.get("/api/keyword/switch?type="+type).then(
@@ -268,6 +296,12 @@ export default {
       this.sort.order=index;
       this.getKeywordRankInfo(this.keyid);
     },
+    searchKey(keyid) {
+      // alert(appid);
+      this.getKeywordInfo(keyid);
+      this.getKeywordRankInfo(keyid);
+      this.searchOption.searchInput = "";
+    },
     getKeywordInfo(keyid){
       var that = this;
       axios.get("/api/keyword?id="+keyid).then(
@@ -290,7 +324,6 @@ export default {
             // }
           }else{
             that.notifyVue();
-            //alert("app info wrong!");
           }
         },
       function (err) {}
