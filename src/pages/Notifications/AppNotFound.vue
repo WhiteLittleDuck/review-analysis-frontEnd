@@ -1,5 +1,5 @@
 <template>
-  <div>The APP ID/ APP Name not found! Please try another</div>
+  <div>The APP ID/ APP Name/ Commit ID not found! Please try another</div>
 </template>
 
 <script>

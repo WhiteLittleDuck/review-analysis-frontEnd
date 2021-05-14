@@ -8,7 +8,7 @@
         <sidebar-link to="/maps" :name="$t('sidebar.keyword')" icon="tim-icons icon-key-25"/>
         <sidebar-link to="/notifications" :name="$t('sidebar.add')" icon="tim-icons icon-upload"/>
         <!-- <sidebar-link to="/profile" :name="$t('sidebar.result')" icon="tim-icons icon-upload"/> -->
-        <sidebar-link to="/profile" :name="$t('sidebar.result')" icon="tim-icons icon-cloud-download-93"  v-show="flag"/>
+        <!-- <sidebar-link to="/profile" :name="$t('sidebar.result')" icon="tim-icons icon-cloud-download-93"  v-show="flag"/> -->
         <!-- <sidebar-link to="/table-list" :name="$t('sidebar.tableList')" icon="tim-icons icon-puzzle-10"/> -->
         <!-- <sidebar-link to="/typography" :name="$t('sidebar.typography')" icon="tim-icons icon-align-center"/> -->
         <!-- <sidebar-link to="/dashboard?enableRTL=true" :name="$t('sidebar.rtlSupport')" icon="tim-icons icon-world"/> -->

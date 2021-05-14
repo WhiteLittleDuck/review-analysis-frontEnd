@@ -1,9 +1,8 @@
 <template>
   <card>
-    <h5 slot="header" class="title">Run New APP From Google Play Store</h5>
-    <!-- <div class="row"> -->
-    <!-- <div class="col-md-5 pr-md-1"> -->
-    <div class="row">
+    <h4 slot="header" class="title">Run New APP From Google Play Store</h4>
+
+    <!-- <div class="row">
       <div class="col-md-6 pr-md-1">
         <base-input
           label="First Name"
@@ -20,75 +19,51 @@
         >
         </base-input>
       </div>
-    </div>
+    </div> -->
     <base-input
-      label="APP ID or APP NAME"
+      label="APP ID in Google Play Store"
       placeholder="Wechat"
       v-model="model.company"
     >
     </base-input>
-    <!-- </div> -->
-    <!-- <div class="col-md-3 px-md-1">
-        <base-input label="Username"
-                  placeholder="Username"
-                  v-model="model.username">
-        </base-input>
-      </div>
-      <div class="col-md-4 pl-md-1">
-        <base-input label="Email address"
-                  type="email"
-                  placeholder="mike@email.com">
-        </base-input>
-      </div> -->
-    <!-- </div> -->
+
 
     <div class="row">
       <div class="col-md-12">
         <base-input
-          label="Email"
+          label="Email(MUST)"
           v-model="model.email"
-          placeholder="Your Email Address(MUST)"
+          placeholder="Your Email Address"
         >
         </base-input>
       </div>
     </div>
-    <!-- <div class="row">
-      <div class="col-md-4 pr-md-1">
-        <base-input label="City" v-model="model.city" placeholder="City">
-        </base-input>
-      </div>
-      <div class="col-md-4 px-md-1">
         <base-input
-          label="Country"
-          v-model="model.country"
-          placeholder="Country"
+          label="Comment(Optional)"
+          v-model="model.lastName"
+          placeholder="We will be so grateful if there is any suggestion for our tool :)"
         >
         </base-input>
-      </div>
-      <div class="col-md-4 pl-md-1">
-        <base-input label="Postal Code" placeholder="ZIP Code"> </base-input>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-        <base-input>
-          <label>About Me</label>
-          <textarea
-            rows="4"
-            cols="80"
-            class="form-control"
-            placeholder="Here can be your description"
-            v-model="model.about"
-          >
-          </textarea>
-        </base-input>
-      </div>
-    </div> -->
     <base-button slot="footer" type="primary" fill>Submit</base-button>
   </card>
 </template>
 <script>
 export default {
+  methods:{
+    submit(){
+      var that = this;
+      axios.get("/api/keyword/rank?id="+keywordid+"&order="+that.sort.order).then(
+        function (response) {
+          if (response.data["meta"]["status"] == 200) {
+            that.tableData = response.data["data"]["info"];
+          }else{
+            //alert("app rank wrong！");
+          }
+        },
+        function (err) {}
+      );
+    },
+  },
   props: {
     model: {
       type: Object,

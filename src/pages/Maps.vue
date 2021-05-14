@@ -21,25 +21,6 @@
             <a class="dropdown-item" href="#/maps" @click="searchOption.type=0">Keyword Text</a>
             <a class="dropdown-item" href="#/maps" @click="searchOption.type=1">Keyword ID</a>
           </base-dropdown>
-          <modal :show.sync="searchOption.modal">
-            <h3 slot="header" class="modal-title" id="modal-title-default">All Availabel Keywords</h3>
-
-            <p>alignment, clarity, column, combination, design, layer, layout, look, position, row, scale, 
-              shape, space, structure, style, UI, alert ,button, checkbox, confirm, dropdown, element, 
-              exploration, form, icon, input, load, menu, message, navigation, notification, picker, 
-              progress, radio, result, search, select, slider, spin, step, appearance, bar, baseline, 
-              bold, brightness, composition, consistency, distance, RGB, blindness, edge, emblem, footer, 
-              gradient, grayscale, grid, hierarchy, hover, interface, italic, kerning, logo, mark, monochromatic, 
-              opacity, overlap, pattern, pixel, proximity, round corner, saturation, scheme, serif, shade, 
-              symbol, theme, tint, tone, typography, visibility, weight, widget, wireframe, switch, tab, 
-              table, toggle, background, color, contrast, font, header, height, image, line, paragraph, 
-              photo, shadow, size, text, title</p>
-
-            <template slot="footer">
-                <base-button type="secondary" class="ml-auto" @click="modal = false">Close
-                </base-button>
-            </template>
-        </modal>
             </div>
           </div>
         </div>
@@ -261,6 +242,25 @@ export default {
     },
   },
   methods: {
+    search(keyid){
+      this.getKeywordInfo(keyid);
+      this.getKeywordRankInfo(keyid);
+      this.searchOption.searchInput = "";
+    },
+    searchID(text) {
+      // alert(this.searchOption.searchInput)
+      var that = this;
+      // let data = name;
+      axios.post("/api/keyword/id", text).then((response) => {
+        if(response.data["meta"]["status"]==200){
+          var keyid = response.data["data"]["id"];
+            // alert(appid)
+          that.search(keyid);
+        }else{
+          that.notifyVue();
+        }
+      });
+    },
     notifyVue() {
       this.$notify({
         component: KeyNotFound,
@@ -296,11 +296,13 @@ export default {
       this.sort.order=index;
       this.getKeywordRankInfo(this.keyid);
     },
-    searchKey(keyid) {
-      // alert(appid);
-      this.getKeywordInfo(keyid);
-      this.getKeywordRankInfo(keyid);
-      this.searchOption.searchInput = "";
+    searchKey(key) {
+      // alert(this.searchOption.type)
+      if (this.searchOption.type == 0) {
+        this.searchID(key);
+      }else{
+        this.search(key);
+      }
     },
     getKeywordInfo(keyid){
       var that = this;
