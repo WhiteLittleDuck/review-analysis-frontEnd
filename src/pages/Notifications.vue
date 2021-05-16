@@ -26,7 +26,9 @@
           placeholder="We will be so grateful if there is any suggestion for our tool :)"
         >
         </base-input> -->
-        <base-button slot="footer" type="primary" fill @click="submit">Submit</base-button>
+        <base-button slot="footer" type="primary" fill @click="submit"
+          >Submit</base-button
+        >
       </card>
     </div>
     <div class="col-md-4">
@@ -58,30 +60,34 @@ import axios from "axios";
 
 export default {
   methods: {
-    submit(){
-      if(this.model.id==""||this.model.email==""){
+    submit() {
+      if (this.model.id == "" || this.model.email == "") {
         alert("please input APP ID and Email!");
-      }else{
-var that = this;
-      axios.get("/api/new?id=" + that.model.id + "&order=" + that.model.email).then(
-        function (response) {
-          if (response.data["meta"]["status"] == 200) {
-            alert("success!")
-            that.model.id="";
-            that.model.email="";
-            // that.tableData = response.data["data"]["info"];
-          } else if(response.data["meta"]["status"] == 400) {
-            alert("This App is already exist in our databse！");
-            that.$router.push({name:'icons',params: {id:that.model.id}});      
-          }else{
-            alert("Invalid App ID input!");
-          }
-        },
-        function (err) {}
-      );
+      } else {
+        var that = this;
+        axios
+          .get("/api/new?id=" + that.model.id + "&order=" + that.model.email)
+          .then(
+            function (response) {
+              if (response.data["meta"]["status"] == 200) {
+                alert("success!");
+                that.model.id = "";
+                that.model.email = "";
+                // that.tableData = response.data["data"]["info"];
+              } else if (response.data["meta"]["status"] == 400) {
+                alert("This App is already exist in our databse！");
+                that.$router.push({
+                  name: "icons",
+                  params: { id: that.model.id },
+                });
+              } else {
+                alert("Invalid App ID input!");
+              }
+            },
+            function (err) {}
+          );
       }
     },
-      
   },
   components: {
     // EditProfileForm,

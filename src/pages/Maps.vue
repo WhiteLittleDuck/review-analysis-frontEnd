@@ -41,7 +41,7 @@
           </div>
         </div>
           <div class="float-right">
-            <a :href="'/api/download?type=key&id='+keyid" class="card-link">Download</a>
+            <a :href="'/api/download?type=key&id='+keyid" class="card-link text-info">Download</a>
           </div>
       </card>
 
@@ -53,6 +53,7 @@
                review given score: {{exampleData.pos.score}} / 5
             </h6>
             <!-- <p class="card-text">positive:</p> -->
+            
             <blockquote class="blockquote mb-0">
               <p>
                 {{exampleData.pos.content}}
@@ -61,8 +62,9 @@
                 reivew from app <cite title="Source Title">{{exampleData.pos.name}}</cite>
               </footer>
             </blockquote>
+
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(1)"
+              <base-button size="sm" type="success" @click="switchFunc(1)"
                 >switch</base-button>
             </div>
           </card>
@@ -83,7 +85,7 @@
               </footer>
             </blockquote>
               <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(-1)"
+              <base-button size="sm" type="success" @click="switchFunc(-1)"
                   >switch</base-button>
               </div>
           </card>
@@ -97,7 +99,7 @@
               <h5 class="card-category">
                 POSITIVE : NEGATIVE = {{keywordInfo.pos}} : {{keywordInfo.neg}}              </h5>
               <h3 class="card-title">
-                <i class="tim-icons icon-bell-55 text-primary"></i> Total: {{keywordInfo.total}}
+                <i class="tim-icons icon-bell-55 text-info"></i> Total: {{keywordInfo.total}}
               </h3>
             </template>
             <div class="chart-area" style="height: 55%">
@@ -122,7 +124,7 @@
                             class="dropdown-toggle nav-link float-left"
                             data-toggle="dropdown"
                           >                            
-                            <i class="tim-icons icon-settings-gear-63"></i>
+                            <i class="tim-icons icon-settings-gear-63 text-info"></i>
                           </a>
                           <li class="nav-link">
                             <a href="#/maps" class="nav-item dropdown-item" @click="changeSort(0)">count</a>
@@ -278,7 +280,7 @@ export default {
           console.log(response.data);
 
           if (response.data["meta"]["status"] == 200) {
-            if(type==0){
+            if(type==1){
               that.exampleData.pos=response.data["data"];
             }else{
               that.exampleData.neg=response.data["data"];

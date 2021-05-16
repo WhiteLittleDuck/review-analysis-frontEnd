@@ -1,25 +1,6 @@
 <template>
   <card>
     <h4 slot="header" class="title">Run New APP From Google Play Store</h4>
-
-    <!-- <div class="row">
-      <div class="col-md-6 pr-md-1">
-        <base-input
-          label="First Name"
-          v-model="model.firstName"
-          placeholder="First Name"
-        >
-        </base-input>
-      </div>
-      <div class="col-md-6 pl-md-1">
-        <base-input
-          label="Last Name"
-          v-model="model.lastName"
-          placeholder="Last Name"
-        >
-        </base-input>
-      </div>
-    </div> -->
     <base-input
       label="APP ID in Google Play Store"
       placeholder="Wechat"
@@ -52,7 +33,7 @@ export default {
   methods:{
     submit(){
       var that = this;
-      axios.get("/api/keyword/rank?id="+keywordid+"&order="+that.sort.order).then(
+      axios.get("/api/new?id="+keywordid+"&order="+that.sort.order).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             that.tableData = response.data["data"]["info"];

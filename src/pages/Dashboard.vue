@@ -22,7 +22,7 @@
                             href="#/dashboard"
                             class="dropdown-toggle nav-link float-left"
                             data-toggle="dropdown">                         
-                            <i class="tim-icons icon-settings-gear-63 text-success"></i>
+                            <i class="tim-icons icon-settings-gear-63 text-info"></i>
                           </a>
                           <li class="nav-link">
                             <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(0)">count</a>
@@ -118,13 +118,13 @@
             <div class="col">
               <div class = "row" >
                 <div class="col">
-                  <base-button link type="success" :disabled="page<=1" @click="changePage(page-1)">previous</base-button>
+                  <base-button link type="info" :disabled="page<=1" @click="changePage(page-1)">previous</base-button>
                 </div>
                 <div class="col">
                   <base-input :value="page" v-model="page" @keyup.enter="changePage(page)"></base-input>
                 </div>
                 <div class="col">
-                  <base-button link type="success" :disabled="page>=appPage" @click="changePage(page+1)">next</base-button>
+                  <base-button link type="info" :disabled="page>=appPage" @click="changePage(page+1)">next</base-button>
                 </div>
               </div>
             </div>

@@ -103,12 +103,12 @@
               <!-- <base-button round type="primary">Primary</base-button>
       <base-button round type="primary">Primary</base-button> -->
               <div class="col" style="width: 150px">
-                <a :href="appInfo.link" class="card-link">Google Play</a>
+                <a :href="appInfo.link" class="card-link text-info">Google Play</a>
               </div>
               <div class="col">
                 <a
                   :href="'/api/download?type=app&id=' + appid"
-                  class="card-link"
+                  class="card-link text-info"
                   >Download</a
                 >
               </div>
@@ -189,7 +189,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(1)"
+              <base-button size="sm" type="success" @click="switchFunc(1)"
                 >switch</base-button
               >
             </div>
@@ -212,7 +212,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(-1)"
+              <base-button size="sm" type="success" @click="switchFunc(-1)"
                 >switch</base-button
               >
             </div>
@@ -228,7 +228,7 @@
                 POSITIVE : NEGATIVE = {{ appInfo.pos }} : {{ appInfo.neg }}
               </h5>
               <h3 class="card-title">
-                <i class="tim-icons icon-bell-55 text-primary"></i> Total:
+                <i class="tim-icons icon-bell-55 text-info"></i> Total:
                 {{ appInfo.total }}
               </h3>
             </template>
@@ -254,7 +254,7 @@
               <base-dropdown
                 title-tag="a"
                 menu-on-right="false"
-                class="nav-item float-left"
+                class="nav-item float-left "
               >
                 <a
                   slot="title"
@@ -262,7 +262,7 @@
                   class="dropdown-toggle nav-link float-left"
                   data-toggle="dropdown"
                 >
-                  <i class="tim-icons icon-settings-gear-63"></i>
+                  <i class="tim-icons icon-settings-gear-63 text-info"></i>
                 </a>
                 <li class="nav-link">
                   <a
@@ -470,7 +470,7 @@ export default {
           // console.log(response.data);
 
           if (response.data["meta"]["status"] == 200) {
-            if (type == 0) {
+            if (type == 1) {
               that.exampleData.pos = response.data["data"];
             } else {
               that.exampleData.neg = response.data["data"];
