@@ -189,7 +189,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(0)"
+              <base-button size="sm" type="primary" @click="switchFunc(1)"
                 >switch</base-button
               >
             </div>
@@ -212,7 +212,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(1)"
+              <base-button size="sm" type="primary" @click="switchFunc(-1)"
                 >switch</base-button
               >
             </div>
@@ -465,7 +465,7 @@ export default {
     },
     switchFunc(type) {
       var that = this;
-      axios.get("/api/app/switch?type=" + type).then(
+      axios.get("/api/app/switch?type=" + type+"&id="+that.appid).then(
         function (response) {
           // console.log(response.data);
 

@@ -62,7 +62,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(0)"
+              <base-button size="sm" type="primary" @click="switchFunc(1)"
                 >switch</base-button>
             </div>
           </card>
@@ -83,7 +83,7 @@
               </footer>
             </blockquote>
               <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="primary" @click="switchFunc(1)"
+              <base-button size="sm" type="primary" @click="switchFunc(-1)"
                   >switch</base-button>
               </div>
           </card>
@@ -273,7 +273,7 @@ export default {
     },
     switchFunc(type){
       var that = this;
-      axios.get("/api/keyword/switch?type="+type).then(
+      axios.get("/api/keyword/switch?type="+type+"&id="+that.keyid).then(
         function (response) {
           console.log(response.data);
 
