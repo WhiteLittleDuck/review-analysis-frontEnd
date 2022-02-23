@@ -12,11 +12,14 @@
                 'SEARCH BY ' + searchOption.searchRule[searchOption.type]
               "
               v-model="searchOption.searchInput"
-              @keyup.enter="searchApp(searchOption.searchInput)"
+              @keyup.enter="search(searchOption.searchInput)"
             >
             </base-input>
           </div>
-          <div class="col-lg-2">
+          <base-button round type="success" @click="search(searchOption.searchInput)">
+            SEARCH APP
+          </base-button>
+          <!--<div class="col-lg-2">
             <div>
               <base-dropdown
                 menu-classes="dropdown-black"
@@ -57,7 +60,6 @@
                   <template slot="columns">
                     <th class="text-center">App ID</th>
                     <th class="text-center">SEE</th>
-                    <!-- <th class="text-center">More</th> -->
                   </template>
                   <template slot-scope="{ row }">
                     <td class="text-center">{{ row.id }}</td>
@@ -70,7 +72,7 @@
                 </card>
               </modal>
             </div>
-          </div>
+          </div>-->
         </div>
       </card>
     </div>
@@ -78,32 +80,30 @@
       <div class="row">
         <div class="col-lg-10">
           <card>
-            <h4 class="card-title">{{ appInfo.name }}</h4>
-            <h6 class="card-subtitle mb-2 text-muted">
-              APP ID: {{ appInfo.id }}
-            </h6>
+            <h4 class="card-title"> App Name: {{ appInfo.name }}</h4>
+            <h5 class="card-subtitle mb-2 text-muted">
+              App ID: {{ appInfo.appId }}
+            </h5>
             <div class="row">
               <div class="col">
-                <p class="card-text">positive rank: {{ appInfo.posRank }}</p>
-                <p class="card-text">UI related rank: {{ appInfo.UIRank }}</p>
-                <!-- <p class="card-text">count rank: {{appInfo.countRank}}</p> -->
+                <p class="card-text">total count: {{ appInfo.reviews }}</p>
+                <p class="card-text">UI-related count: {{ appInfo.ui_cnt }}</p>
+                <p class="card-text">attr</p>
               </div>
               <div class="col">
-                <p class="card-text">positive rate: {{ appInfo.posRate }}</p>
-                <p class="card-text">UI related rate: {{ appInfo.UIRate }}</p>
-                <!-- <p class="card-text">count rank: {{appInfo.countRank}}</p> -->
+                <p class="card-text">score: {{ appInfo.score }}/5</p>
+                <p class="card-text">UI rate: {{ toPercentag(appInfo.ui_rate) }}%</p>
+                <p class="card-text">attr</p>
               </div>
               <div class="col">
-                <p class="card-text">count rank: {{ appInfo.countRank }}</p>
-                <!-- <p class="card-text">UI related rate: {{appInfo.UIRate}}</p> -->
-                <!-- <p class="card-text"></p> -->
+                <p class="card-text">positive UI count: {{ appInfo.ui_pos_cnt }}</p>
+                <p class="card-text">negative UI count: {{appInfo.ui_neg_cnt}}</p>
+                <p class="card-text">attr</p> 
               </div>
             </div>
             <div class="row float-right" style="padding-top: 10px">
-              <!-- <base-button round type="primary">Primary</base-button>
-      <base-button round type="primary">Primary</base-button> -->
               <div class="col" style="width: 150px">
-                <a :href="appInfo.link" class="card-link text-info">Google Play</a>
+                <a :href="appInfo.url" class="card-link text-info">Google Play</a>
               </div>
               <div class="col">
                 <a
@@ -112,7 +112,6 @@
                   >Download</a
                 >
               </div>
-              <!-- <p>{{ this.aaa }}</p> -->
             </div>
           </card>
         </div>
@@ -124,9 +123,17 @@
               :src="appInfo.icon"
               alt="Card image cap"
             />
-            <!-- <h4 class="card-title">Card title</h4>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a> -->
+          </card>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <card>
+           <h4 class="card-title">Descrption of App:</h4>
+            <p class="card-text">
+            <div v-html="appInfo.descriptionHTML">
+            </div>
+            </p>
           </card>
         </div>
       </div>
@@ -141,9 +148,9 @@
                   :class="isRTL ? 'text-right' : 'text-left'"
                 >
                   <h5 class="card-category">
-                    {{ this.appInfo.name }} {{ this.appInfo.id }}
+                    {{ this.appInfo.appId }}
                   </h5>
-                  <h2 class="card-title">{{ $t("analysis.trend") }}</h2>
+                  <h2 class="card-title">{{ trendChart.sortType[trendChart.sortIndex] }} - version</h2>
                 </div>
                 <div class="col-sm-6">
                   <div
@@ -153,6 +160,47 @@
                   ></div>
                 </div>
               </div>
+              <base-dropdown
+                title-tag="a"
+                menu-on-right="false"
+                class="nav-item float-left ">
+                <a
+                  slot="title"
+                  href="#/icons"
+                  class="dropdown-toggle nav-link float-left"
+                  data-toggle="dropdown">
+                  <i class="tim-icons icon-settings-gear-63 text-info"></i>
+                </a>
+                <li class="nav-link">
+                  <a
+                    href="#/icons"
+                    class="nav-item dropdown-item"
+                    @click="setTrend(0)"
+                    >{{trendChart.sortType[0]}}</a>
+                </li>
+                <li class="nav-link">
+                  <a
+                    href="#/icons"
+                    class="nav-item dropdown-item"
+                    @click="setTrend(1)"
+                    >{{trendChart.sortType[1]}}</a
+                  >
+                </li>
+                <li class="nav-link">
+                  <a
+                    href="#/icons"
+                    class="nav-item dropdown-item"
+                    @click="setTrend(2)"
+                    >{{trendChart.sortType[2]}}</a
+                  >
+                  <li class="nav-link">
+                  <a
+                    href="#/icons"
+                    class="nav-item dropdown-item"
+                    @click="setTrend(3)"
+                    >{{trendChart.sortType[3]}}</a>
+                </li>
+              </base-dropdown>
             </template>
             <div class="chart-area">
               <line-chart
@@ -189,7 +237,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="success" @click="switchFunc(1)"
+              <base-button size="sm" type="success" @click="getExample(1)"
                 >switch</base-button
               >
             </div>
@@ -212,7 +260,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="success" @click="switchFunc(-1)"
+              <base-button size="sm" type="success" @click="getExample(-1)"
                 >switch</base-button
               >
             </div>
@@ -225,11 +273,11 @@
           <card type="chart">
             <template slot="header">
               <h5 class="card-category">
-                POSITIVE : NEGATIVE = {{ appInfo.pos }} : {{ appInfo.neg }}
+                POSITIVE : NEGATIVE = {{ appInfo.ui_pos_cnt }} : {{ appInfo.ui_neg_cnt }}
               </h5>
               <h3 class="card-title">
-                <i class="tim-icons icon-bell-55 text-info"></i> Total:
-                {{ appInfo.total }}
+                <i class="tim-icons icon-bell-55 text-info"></i> All UI review count:
+                {{ appInfo.ui_cnt }}
               </h3>
             </template>
             <div class="chart-area" style="height: 55%">
@@ -386,6 +434,9 @@ export default {
       },
 
       trendChart: {
+        sortIndex: 0,
+        sortType:['positive UI-review rate (%)', 'UI related review count', 'positive UI-review count', 'negative UI-review count'],
+        sortData:[],
         gradientColors: config.colors.primaryGradient,
         gradientStops: [1, 0.4, 0],
         extraOptions: chartConfigs.trendChartOptions,
@@ -408,7 +459,7 @@ export default {
               data: [10, 12, 15, 20, 30, 40, 60, 90],
             },
           ],
-          labels: ["1.0", "1,1", "1,2", "1.3", "1.4", "1.5", "2.0", "2.1"],
+          labels: ["1.0", "1,1", "1,2", "1.3", "1.4", "1.5", "2.0", "2.1"]
         },
       },
     };
@@ -425,32 +476,36 @@ export default {
     },
   },
   methods: {
-    search(appid,type){
-        this.getAppInfo(appid,type);
-        this.getAppRankInfo(appid,type);
+    toPercentag(val){     
+        return Number(val*100).toFixed(2);
+    },
+    search(appid){
+        this.getAppInfo(appid);
+        this.getAppRankInfo(appid,0);
         this.searchOption.searchInput = "";
         this.searchOption.modal = false;
+        console.log(searchOption.searchInput)
     },
-    searchID(name) {
-      // alert(this.searchOption.searchInput)
-      var that = this;
-      let data = name;
-      axios.post("/api/app/id", data).then((response) => {
-        // console.log( response);
-        if(response.data["meta"]["status"]==200){
-          if(response.data["data"]["id"].length==1){
-            var appid = response.data["data"]["id"][0]["id"];
-            // alert(appid)
-            that.search(appid,0);
-          }else{
-            this.searchOption.modal = true;
-            this.chooseData=response.data["data"]["id"];
-          }
-        }else{
-          that.notifyVue();
-        }
-      });
-    },
+    // searchID(name) {
+    //   // alert(this.searchOption.searchInput)
+    //   var that = this;
+    //   let data = name;
+    //   axios.post("/api/app/id", data).then((response) => {
+    //     // console.log( response);
+    //     if(response.data["meta"]["status"]==200){
+    //       if(response.data["data"]["id"].length==1){
+    //         var appid = response.data["data"]["id"][0]["id"];
+    //         // alert(appid)
+    //         that.search(appid,0);
+    //       }else{
+    //         this.searchOption.modal = true;
+    //         this.chooseData=response.data["data"]["id"];
+    //       }
+    //     }else{
+    //       that.notifyVue();
+    //     }
+    //   });
+    // },
     notifyVue() {
       this.$notify({
         component: AppNotFound,
@@ -463,7 +518,7 @@ export default {
       this.searchOption.searchInput = "";
 
     },
-    switchFunc(type) {
+    getExample(type) {
       var that = this;
       axios.get("/api/app/switch?type=" + type+"&id="+that.appid).then(
         function (response) {
@@ -488,43 +543,76 @@ export default {
       this.sort.order = index;
       this.getAppRankInfo(this.appid,0);
     },
-    searchApp(app) {
-      if (this.searchOption.type == 0) {
-        this.searchID(app);
-      } else if(this.searchOption.type==1){
-        // alert(appid);
-        this.search(app,0);
-      }else{
-        this.search(app,1);
-      }
+    setTrend(index){
+      this.trendChart.sortIndex=index;
+      this.trendChart.trendData.datasets[0].data = this.trendChart.sortData[index]['data'];
+      this.trendChart.trendData.labels = this.trendChart.sortData[index]['label'];
+      this.$refs.linechart.reloadChart();
     },
-    getAppInfo(appid,type) {
+    // searchApp(app) {
+    //   if (this.searchOption.type == 0) {
+    //     this.searchID(app);
+    //   } else if(this.searchOption.type==1){
+    //     // alert(appid);
+    //     this.search(app,0);
+    //   }else{
+    //     this.search(app,1);
+    //   }
+    // },
+    getAppInfo(appid) {
       var that = this;
-      axios.get("/api/app?id=" + appid+"&type="+type).then(
+      axios.get("/api/app?id=" + appid).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
-            that.appid = response.data["data"]["info"]["id"];
+            that.appid = response.data["data"]["info"]["appId"];
             var info = response.data["data"]["info"];
             //set app info
             that.appInfo = info;
             //set pie chart data
-            that.chartData.datasets[0]["data"] = [info["pos"], info["neg"]];
+            that.chartData.datasets[0]["data"] = [info["ui_pos_cnt"], info["ui_neg_cnt"]];
             that.$refs.pie.reloadChart();
 
-            var data = [];
-            var label = [];
-            var x;
-            //set line chart data
-            for (x in response.data["data"]["version"]) {
-              label.push(response.data["data"]["version"][x]["version"]);
-              data.push(response.data["data"]["version"][x]["rate"]);
+            var i;
+            var data = [], label=[]            
+            //pos rate
+            for (i = 0; i < response.data["data"]["version_pos_rate"].length; i++) { 
+              label.push(response.data["data"]["version_pos_rate"][i][0]);
+              data.push(response.data["data"]["version_pos_rate"][i][1]*100);
             }
-            that.trendChart.trendData.datasets[0].data = data;
-            that.trendChart.trendData.labels = label;
-            that.$refs.linechart.reloadChart();
-            //set pos and neg example
-            that.exampleData.pos = response.data["data"]["posExample"];
-            that.exampleData.neg = response.data["data"]["negExample"];
+            that.trendChart.sortData.push({'data':data,'label':label}) 
+            
+            // ui cnt
+            data = [], label=[]            
+            for (i = 0; i < response.data["data"]["version_cnt"].length; i++) { 
+              label.push(response.data["data"]["version_cnt"][i][0]);
+              data.push(response.data["data"]["version_cnt"][i][1]);
+            }
+            that.trendChart.sortData.push({'data':data,'label':label}) 
+
+            // pos cnt 
+            data = [], label=[]  
+            for (i = 0; i < response.data["data"]["version_pos_cnt"].length; i++) { 
+              label.push(response.data["data"]["version_pos_cnt"][i][0]);
+              data.push(response.data["data"]["version_pos_cnt"][i][1]);
+            }
+            that.trendChart.sortData.push({'data':data,'label':label}) 
+
+            // neg cnt
+            data = [], label=[]  
+            for (i = 0; i < response.data["data"]["version_neg_cnt"].length; i++) { 
+              label.push(response.data["data"]["version_neg_cnt"][i][0]);
+              data.push(response.data["data"]["version_neg_cnt"][i][1]);
+            }
+            that.trendChart.sortData.push({'data':data,'label':label}) 
+
+            console.log(that.trendChart.sortData)
+            that.setTrend(0)
+
+            // set pos and neg example
+            that.getExample(1)
+            that.getExample(-1)
+            // that.exampleData.pos = response.data["data"]["posExample"];
+            // that.exampleData.neg = response.data["data"]["negExample"];
           } else {
             that.notifyVue();
             //alert("app info wrong!");
@@ -551,10 +639,10 @@ export default {
     //get appid from dashboard page
     this.appid = this.$route.params.id;
     if (this.appid == null) {
-      this.appid = "12345";
+      this.appid = "com.cake.browser";
     }
 
-    this.getAppInfo(this.appid,0);
+    this.getAppInfo(this.appid);
     this.getAppRankInfo(this.appid,0);
 
     this.i18n = this.$i18n;

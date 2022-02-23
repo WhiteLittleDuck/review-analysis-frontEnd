@@ -66,7 +66,7 @@ export let trendChartOptions = {
   },
   scales: {
     y: {
-      max: 100,
+      max: 1,
       min: 0,
   },
     yAxes: [

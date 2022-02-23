@@ -14,13 +14,22 @@
                     <h2 class="card-title">
                       Rank of {{sort.typeRule[sort.type]}} Reviews
                     </h2>
+                    <base-dropdown menu-classes="dropdown-black"
+                      title-classes="btn btn-secondary"
+                      :title="'Rule: '+sort.orderRule[sort.order]">
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(0)">UI count</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(1)">positive review rate</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(2)">negative review rate</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(3)">UI related rate</a>
+                    </base-dropdown>
+                    <!--
                      <base-dropdown
                           title-tag="a"
-                          class="nav-item float-left">
+                          class="nav-item float-right">
                           <a
                             slot="title"
                             href="#/dashboard"
-                            class="dropdown-toggle nav-link float-left"
+                            class="dropdown-toggle nav-link float-right"
                             data-toggle="dropdown">                         
                             <i class="tim-icons icon-settings-gear-63 text-info"></i>
                           </a>
@@ -30,7 +39,7 @@
                           <li class="nav-link">
                             <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(1)">positive rank rate</a>
                           </li>
-                          <!-- <div class="dropdown-divider"></div> -->
+                          
                           <li class="nav-link">
                             <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(2)">negative rank rate</a>
                           </li>
@@ -38,6 +47,7 @@
                             <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(3)">UI related count</a>
                           </li>
                         </base-dropdown>
+                    -->
                   </div>
                 </div>
               </div>
@@ -79,28 +89,28 @@
                   <template slot="columns">
                     <th class="text-center">Rank</th>
                     <th class="text-center">Name</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Positive</th>
-                    <th class="text-center">Negative</th>
+                    <th class="text-center">UI Cnt</th>
+                    <th class="text-center">Pos Cnt</th>
+                    <th class="text-center">Neg Cnt</th>
                     <!--class="text-right/center"-->
-                    <th class="text-center">Rate</th>
-                    <th class="text-center">UI-Related</th>
+                    <th class="text-center">Pos Rate</th>
+                    <th class="text-center">UI Rate</th>
                     <th class="text-center">More</th>
                   </template>
                   <template slot-scope="{ row }">
                     <td class="text-center">{{ row.rank }}</td>
-                    <td class="text-center">{{ row.name }}</td>
-                    <td class="text-center">{{ row.total }}</td>
-                    <td class="text-center">{{ row.positive }}</td>
-                    <td class="text-center">{{ row.negative }}</td>
-                    <td class="text-center">{{ row.rate }}%</td>
-                    <td class="text-center">{{ row.UIrate }}%</td>
+                    <td class="text-center">{{ row.appId }}</td>
+                    <td class="text-center">{{ row.ui_cnt }}</td>
+                    <td class="text-center">{{ row.ui_pos_cnt }}</td>
+                    <td class="text-center">{{ row.ui_neg_cnt }}</td>
+                    <td class="text-center">{{ toPercentag(row.ui_pos_rate) }}%</td>
+                    <td class="text-center">{{ toPercentag(row.ui_rate) }}%</td>
                     <td class="td-actions text-center">
                       <base-button
                         class="animation-on-hover"
                         type="success"
                         size="sm"
-                        @click="detail(row.id)"
+                        @click="detail(row.appId)"
                         >Details</base-button
                       >
                     </td>
@@ -160,7 +170,7 @@ export default {
       appPage: 295,
       keyPage: 11,
       sort:{
-        orderRule: ["total count", "positive rate", "negative rate", "UI related rate"],
+        orderRule: ["UI count", "positive rate", "negative rate", "UI rate"],
         typeRule: ["App","Key"],
         order: 0,
         type: 0,
@@ -271,6 +281,9 @@ export default {
         function (err) {}
       );
     },
+    toPercentag(val){     
+        return Number(val*100).toFixed(2);
+    } 
   },
   mounted() {
     this.getRankInfo();

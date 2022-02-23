@@ -202,7 +202,7 @@ export default {
       searchOption:{
         searchInput: "",
         type:0,
-        searchRule:['Keyword Text','Keyword ID'],
+        searchRule:['Key','Key ID'],
         modal:false,
       },
       // dropDownText="Keyword Text",
