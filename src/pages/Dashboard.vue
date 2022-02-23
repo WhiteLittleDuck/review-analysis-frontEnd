@@ -92,7 +92,6 @@
                     <th class="text-center">UI Cnt</th>
                     <th class="text-center">Pos Cnt</th>
                     <th class="text-center">Neg Cnt</th>
-                    <!--class="text-right/center"-->
                     <th class="text-center">Pos Rate</th>
                     <th class="text-center">UI Rate</th>
                     <th class="text-center">More</th>

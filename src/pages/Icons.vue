@@ -163,6 +163,7 @@
               <base-dropdown
                 title-tag="a"
                 menu-on-right="false"
+                menu-classes="dropdown-black"
                 class="nav-item float-left ">
                 <a
                   slot="title"
@@ -171,35 +172,10 @@
                   data-toggle="dropdown">
                   <i class="tim-icons icon-settings-gear-63 text-info"></i>
                 </a>
-                <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="setTrend(0)"
-                    >{{trendChart.sortType[0]}}</a>
-                </li>
-                <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="setTrend(1)"
-                    >{{trendChart.sortType[1]}}</a
-                  >
-                </li>
-                <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="setTrend(2)"
-                    >{{trendChart.sortType[2]}}</a
-                  >
-                  <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="setTrend(3)"
-                    >{{trendChart.sortType[3]}}</a>
-                </li>
+                  <a class="dropdown-item" href="#/icons" @click="setTrend(0)">{{trendChart.sortType[0]}}</a>
+                  <a class="dropdown-item" href="#/icons" @click="setTrend(1)">{{trendChart.sortType[1]}}</a>
+                  <a class="dropdown-item" href="#/icons" @click="setTrend(2)">{{trendChart.sortType[2]}}</a>
+                  <a class="dropdown-item" href="#/icons" @click="setTrend(3)">{{trendChart.sortType[3]}}</a>
               </base-dropdown>
             </template>
             <div class="chart-area">
@@ -289,57 +265,37 @@
             </div>
           </card>
         </div>
+
         <div class="col-lg-8" :class="{ 'text-right': isRTL }">
           <card type="chart">
             <template slot="header">
               <h5 class="card-category">
-                CURRENT SORT RULE: {{ sort.orderRule[sort.order] }}
+                SORTED BY: {{ sort.orderRule[sort.order] }}
               </h5>
               <h3 class="card-title">
                 <i class="tim-icons icon-delivery-fast text-info"></i> Keyword
-                Rank
+                Rank of {{ appInfo.name }}
               </h3>
               <base-dropdown
                 title-tag="a"
                 menu-on-right="false"
-                class="nav-item float-left "
-              >
-                <a
-                  slot="title"
-                  href="#/icons"
-                  class="dropdown-toggle nav-link float-left"
-                  data-toggle="dropdown"
-                >
-                  <i class="tim-icons icon-settings-gear-63 text-info"></i>
-                </a>
-                <li class="nav-link">
+                menu-classes="dropdown-black"
+                class="nav-item float-left ">
                   <a
+                    slot="title"
                     href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="changeSort(0)"
-                    >count</a
-                  >
-                </li>
-                <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="changeSort(1)"
-                    >positive rank rate</a
-                  >
-                </li>
-                <!-- <div class="dropdown-divider"></div> -->
-                <li class="nav-link">
-                  <a
-                    href="#/icons"
-                    class="nav-item dropdown-item"
-                    @click="changeSort(2)"
-                    >negative rank rate</a
-                  >
-                </li>
+                    class="dropdown-toggle nav-link float-left"
+                    data-toggle="dropdown">
+                    <i class="tim-icons icon-settings-gear-63 text-info"></i>
+                  </a>
+                  <a class="dropdown-item" href="#/icons" @click="getAppRankInfo(0)">UI count</a>
+                  <a class="dropdown-item" href="#/icons" @click="getAppRankInfo(1)">positive count</a>
+                  <a class="dropdown-item" href="#/icons" @click="getAppRankInfo(2)">negative count</a>
+                  <a class="dropdown-item" href="#/icons" @click="getAppRankInfo(3)">positive rate</a>
+                  <a class="dropdown-item" href="#/icons" @click="getAppRankInfo(4)">negative rate</a>
               </base-dropdown>
             </template>
-            <div class="chart-area">
+            <div >
               <div>
                 <!--class="table-responsive">-->
                 <!-- <user-table></user-table> -->
@@ -347,20 +303,20 @@
                   <template slot="columns">
                     <th class="text-center">Rank</th>
                     <th class="text-center">Name</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Positive</th>
-                    <th class="text-center">Negative</th>
+                    <th class="text-center">UI Count</th>
+                    <th class="text-center">Positive Count</th>
+                    <th class="text-center">Negative Count</th>
                     <!--class="text-right/center"-->
-                    <th class="text-center">Rate</th>
+                    <th class="text-center">Positive Rate</th>
                     <!-- <th class="text-center">More</th> -->
                   </template>
                   <template slot-scope="{ row }">
                     <td class="text-center">{{ row.rank }}</td>
                     <td class="text-center">{{ row.name }}</td>
-                    <td class="text-center">{{ row.total }}</td>
-                    <td class="text-center">{{ row.positive }}</td>
-                    <td class="text-center">{{ row.negative }}</td>
-                    <td clase="text-center">{{ row.rate }}</td>
+                    <td class="text-center">{{ row.cnt }}</td>
+                    <td class="text-center">{{ row.pos_cnt }}</td>
+                    <td class="text-center">{{ row.neg_cnt }}</td>
+                    <td clase="text-center">{{ toPercentag(row.pos_rate) }}%</td>
                     <!-- <td class="td-actions text-center">
                        <base-button class="animation-on-hover" type="success" size="sm" @click="detail" >Details</base-button>
                     </td> -->
@@ -396,7 +352,7 @@ export default {
       ],
       tableData: [],
       sort: {
-        orderRule: ["total count", "positive rate", "negative rate"],
+        orderRule: ["UI count", "positive count", "negative count", "positive rate", "negative rate"],
         order: 0,
         size: 10,
       },
@@ -481,31 +437,11 @@ export default {
     },
     search(appid){
         this.getAppInfo(appid);
-        this.getAppRankInfo(appid,0);
+        // this.getAppRankInfo(appid,0);
         this.searchOption.searchInput = "";
         this.searchOption.modal = false;
-        console.log(searchOption.searchInput)
+        // console.log(searchOption.searchInput)
     },
-    // searchID(name) {
-    //   // alert(this.searchOption.searchInput)
-    //   var that = this;
-    //   let data = name;
-    //   axios.post("/api/app/id", data).then((response) => {
-    //     // console.log( response);
-    //     if(response.data["meta"]["status"]==200){
-    //       if(response.data["data"]["id"].length==1){
-    //         var appid = response.data["data"]["id"][0]["id"];
-    //         // alert(appid)
-    //         that.search(appid,0);
-    //       }else{
-    //         this.searchOption.modal = true;
-    //         this.chooseData=response.data["data"]["id"];
-    //       }
-    //     }else{
-    //       that.notifyVue();
-    //     }
-    //   });
-    // },
     notifyVue() {
       this.$notify({
         component: AppNotFound,
@@ -522,43 +458,25 @@ export default {
       var that = this;
       axios.get("/api/app/switch?type=" + type+"&id="+that.appid).then(
         function (response) {
-          // console.log(response.data);
-
           if (response.data["meta"]["status"] == 200) {
             if (type == 1) {
               that.exampleData.pos = response.data["data"];
             } else {
               that.exampleData.neg = response.data["data"];
             }
-            // that.tableData = response.data["data"]["info"];
-          } else {
-            //alert("app rank wrong！");
-          }
+          } else {}
         },
         function (err) {}
       );
     },
-    changeSort(index) {
-      // alert("here");
-      this.sort.order = index;
-      this.getAppRankInfo(this.appid,0);
-    },
+
     setTrend(index){
       this.trendChart.sortIndex=index;
       this.trendChart.trendData.datasets[0].data = this.trendChart.sortData[index]['data'];
       this.trendChart.trendData.labels = this.trendChart.sortData[index]['label'];
       this.$refs.linechart.reloadChart();
     },
-    // searchApp(app) {
-    //   if (this.searchOption.type == 0) {
-    //     this.searchID(app);
-    //   } else if(this.searchOption.type==1){
-    //     // alert(appid);
-    //     this.search(app,0);
-    //   }else{
-    //     this.search(app,1);
-    //   }
-    // },
+
     getAppInfo(appid) {
       var that = this;
       axios.get("/api/app?id=" + appid).then(
@@ -572,6 +490,7 @@ export default {
             that.chartData.datasets[0]["data"] = [info["ui_pos_cnt"], info["ui_neg_cnt"]];
             that.$refs.pie.reloadChart();
 
+            // load 4 version list data for trend chart
             var i;
             var data = [], label=[]            
             //pos rate
@@ -604,26 +523,22 @@ export default {
               data.push(response.data["data"]["version_neg_cnt"][i][1]);
             }
             that.trendChart.sortData.push({'data':data,'label':label}) 
-
-            console.log(that.trendChart.sortData)
             that.setTrend(0)
 
-            // set pos and neg example
             that.getExample(1)
             that.getExample(-1)
-            // that.exampleData.pos = response.data["data"]["posExample"];
-            // that.exampleData.neg = response.data["data"]["negExample"];
+            that.getAppRankInfo(0)
           } else {
             that.notifyVue();
-            //alert("app info wrong!");
           }
         },
         function (err) {}
       );
     },
-    getAppRankInfo(appid,type) {
+    getAppRankInfo(order) {
+      this.sort.order = order;
       var that = this;
-      axios.get("/api/app/rank?id=" + appid + "&order=" + that.sort.order+"&type="+type).then(
+      axios.get("/api/app/rank?id=" + this.appid + "&order=" + order).then(
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             that.tableData = response.data["data"]["info"];
@@ -633,6 +548,7 @@ export default {
         },
         function (err) {}
       );
+      console.log(this.tableData)
     },
   },
   mounted() {
@@ -643,7 +559,6 @@ export default {
     }
 
     this.getAppInfo(this.appid);
-    this.getAppRankInfo(this.appid,0);
 
     this.i18n = this.$i18n;
     if (this.enableRTL) {
