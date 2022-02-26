@@ -2,80 +2,22 @@
   <div>
     <div>
       <card>
-        <!-- <base-button @click="test">test</base-button> -->
-
         <div class="row">
           <div class="col-lg-10">
             <base-input
               addon-left-icon="tim-icons icon-zoom-split"
-              :placeholder="
-                'SEARCH BY ' + searchOption.searchRule[searchOption.type]
-              "
+              placeholder="SEARCH BY APP NAME"
               v-model="searchOption.searchInput"
-              @keyup.enter="search(searchOption.searchInput)"
-            >
+              @keyup.enter="search(searchOption.searchInput)">
             </base-input>
           </div>
           <base-button round type="success" @click="search(searchOption.searchInput)">
             SEARCH APP
           </base-button>
-          <!--<div class="col-lg-2">
-            <div>
-              <base-dropdown
-                menu-classes="dropdown-black"
-                title-classes="btn btn-secondary"
-                :title="searchOption.searchRule[searchOption.type]"
-              >
-                <a
-                  class="dropdown-item"
-                  href="#/icons"
-                  @click="searchOption.type = 0"
-                  >App Name</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="#/icons"
-                  @click="searchOption.type = 1"
-                  >App ID</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="#/icons"
-                  @click="searchOption.type = 2"
-                  >Commit ID</a>
-              </base-dropdown>
-              <modal :show.sync="searchOption.modal"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
-                <card
-                  type="secondary"
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0 mb-0 "
-                >
-                <div>
-                <h4 slot="header" class="modal-title" id="modal-title-default">Choose the app you want: </h4>
-
-                <base-table :data="chooseData" :columns="columns">
-                  <template slot="columns">
-                    <th class="text-center">App ID</th>
-                    <th class="text-center">SEE</th>
-                  </template>
-                  <template slot-scope="{ row }">
-                    <td class="text-center">{{ row.id }}</td>
-                    <td class="td-actions text-center">
-                       <base-button class="animation-on-hover" type="success" size="sm" @click="search(row.id,0)">Forward</base-button>
-                    </td>
-                  </template>
-                </base-table>
-              </div>
-                </card>
-              </modal>
-            </div>
-          </div>-->
         </div>
       </card>
     </div>
+
     <div>
       <div class="row">
         <div class="col-lg-10">
@@ -464,7 +406,13 @@ export default {
             } else {
               that.exampleData.neg = response.data["data"];
             }
-          } else {}
+          } else {
+            if (type == 1) {
+              that.exampleData.pos = {'score':'---', 'content': 'sorry, no data currently', 'version':'---'};
+            } else {
+              that.exampleData.neg = {'score':'---', 'content': 'sorry, no data currently', 'version':'---'};
+            }
+          }
         },
         function (err) {}
       );
