@@ -12,7 +12,7 @@
                       CURRENT SORT RULE: {{sort.orderRule[sort.order]}}
                     </h5>
                     <h2 class="card-title">
-                      Rank of {{sort.typeRule[sort.type]}} Reviews
+                      Rank of {{sort.typeRule[sort.type]}}
                     </h2>
                     <base-dropdown menu-classes="dropdown-black"
                       title-classes="btn btn-secondary"
@@ -170,7 +170,7 @@ export default {
       keyPage: 11,
       sort:{
         orderRule: ["UI count", "positive rate", "negative rate", "UI rate"],
-        typeRule: ["App","Key"],
+        typeRule: ["App Reviews"," UI Keywords"],
         order: 0,
         type: 0,
       },

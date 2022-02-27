@@ -42,7 +42,7 @@
       <div class="row">
         <div class="col-lg-6" :class="{ 'text-right': isRTL }">
           <card>
-            <h4 class="card-title">Positive Example</h4>
+            <h4 class="card-title">Positive Review Example</h4>
             <h6 class="card-subtitle mb-2 text-muted">
                review given score: {{exampleData.pos.score}} / 5
             </h6>            
@@ -61,7 +61,7 @@
         </div>
         <div class="col-lg-6" :class="{ 'text-right': isRTL }">
           <card>
-            <h4 class="card-title">Negative Example</h4>
+            <h4 class="card-title">Negative Review Example</h4>
             <h6 class="card-subtitle mb-2 text-muted">
                review given score: {{exampleData.neg.score}} / 5
             </h6>
@@ -99,7 +99,7 @@
             <template slot="header">
               <h5 class="card-category">CURRENT SORT RULE: {{sort.orderRule[sort.order]}}</h5>
               <h3 class="card-title">
-                <i class="tim-icons icon-delivery-fast text-info"></i> App Rank
+                <i class="tim-icons icon-delivery-fast text-info"></i> Rank of App contains <span style="font-weight:bold">{{keyid}}</span>
               </h3>
               <base-dropdown
                 title-tag="a"

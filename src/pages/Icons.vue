@@ -6,7 +6,7 @@
           <div class="col-lg-10">
             <base-input
               addon-left-icon="tim-icons icon-zoom-split"
-              placeholder="SEARCH BY APP NAME"
+              placeholder="SEARCH APP"
               v-model="searchOption.searchInput"
               @keyup.enter="search(searchOption.searchInput)">
             </base-input>
@@ -28,19 +28,19 @@
             </h5>
             <div class="row">
               <div class="col">
-                <p class="card-text">total count: {{ appInfo.reviews }}</p>
+                <p class="card-text">Total count: {{ appInfo.reviews }}</p>
                 <p class="card-text">UI-related count: {{ appInfo.ui_cnt }}</p>
-                <p class="card-text">attr</p>
+                <p class="card-text">Android Version: {{appInfo.androidVersionText}}</p>
               </div>
               <div class="col">
-                <p class="card-text">score: {{ appInfo.score }}/5</p>
-                <p class="card-text">UI rate: {{ toPercentag(appInfo.ui_rate) }}%</p>
-                <p class="card-text">attr</p>
+                <p class="card-text">Average Score: {{ toFix2(appInfo.score) }}/5</p>
+                <p class="card-text">UI Rate: {{ toPercentag(appInfo.ui_rate) }}%</p>
+                <p class="card-text">Genre: {{appInfo.genre}}</p> 
               </div>
               <div class="col">
-                <p class="card-text">positive UI count: {{ appInfo.ui_pos_cnt }}</p>
-                <p class="card-text">negative UI count: {{appInfo.ui_neg_cnt}}</p>
-                <p class="card-text">attr</p> 
+                <p class="card-text">Positive UI Rate: {{ toPercentag(appInfo.ui_pos_rate) }}%</p>
+                <p class="card-text">Positive UI Count: {{appInfo.ui_pos_cnt}}</p>
+                <p class="card-text">Installs: {{appInfo.installs}}</p>
               </div>
             </div>
             <div class="row float-right" style="padding-top: 10px">
@@ -51,8 +51,7 @@
                 <a
                   :href="'/api/download?type=app&id=' + appid"
                   class="card-link text-info"
-                  >Download</a
-                >
+                  >Download</a>
               </div>
             </div>
           </card>
@@ -71,7 +70,7 @@
       <div class="row">
         <div class="col-12">
           <card>
-           <h4 class="card-title">Descrption of App:</h4>
+           <h4 class="card-title">Descrption:</h4>
             <p class="card-text">
             <div v-html="appInfo.descriptionHTML">
             </div>
@@ -139,7 +138,7 @@
       <div class="row">
         <div class="col-lg-6" :class="{ 'text-right': isRTL }">
           <card>
-            <h4 class="card-title">Positive Example</h4>
+            <h4 class="card-title">Positive Review Example</h4>
             <h6 class="card-subtitle mb-2 text-muted">
               review given score: {{ exampleData.pos.score }} / 5
             </h6>
@@ -163,7 +162,7 @@
         </div>
         <div class="col-lg-6" :class="{ 'text-right': isRTL }">
           <card>
-            <h4 class="card-title">Negative Example</h4>
+            <h4 class="card-title">Negative Review Example</h4>
             <h6 class="card-subtitle mb-2 text-muted">
               review given score: {{ exampleData.neg.score }} / 5
             </h6>
@@ -215,9 +214,7 @@
                 SORTED BY: {{ sort.orderRule[sort.order] }}
               </h5>
               <h3 class="card-title">
-                <i class="tim-icons icon-delivery-fast text-info"></i> Keyword
-                Rank of {{ appInfo.name }}
-              </h3>
+                <i class="tim-icons icon-delivery-fast text-info"></i> UI Keyword Rank</h3>
               <base-dropdown
                 title-tag="a"
                 menu-on-right="false"
@@ -288,7 +285,6 @@ export default {
   data() {
     return {
       appid: "12345",
-      //table
       chooseData:[
         {id:1},{id:2},{id:3}
       ],
@@ -376,6 +372,9 @@ export default {
   methods: {
     toPercentag(val){     
         return Number(val*100).toFixed(2);
+    },
+    toFix2(val){
+        return Number(val).toFixed(2);
     },
     search(appid){
         this.getAppInfo(appid);
