@@ -7,18 +7,23 @@
             <base-input
               addon-left-icon="tim-icons icon-zoom-split"
               placeholder="SEARCH APP"
-              v-model="searchOption.searchInput"
-              @keyup.enter="search(searchOption.searchInput)">
+              v-model="searchContent"
+              @keyup.enter="search(searchContent)">
             </base-input>
           </div>
-          <base-button round type="success" @click="search(searchOption.searchInput)">
+          <base-button round type="success" @click="search(searchContent)">
             SEARCH APP
           </base-button>
         </div>
       </card>
     </div>
 
-    <div>
+    <div v-for="item in searchInfo" v-if="isSearch">
+      <AppCard v-on:toFater="searchJump"
+       :title="item.title" :appId="item.appId" :icon="item.icon" :developer="item.developer" :url="item.url" :developerEmail="item.developerEmail" :released="item.released"></AppCard>
+    </div>
+
+    <div v-if="!isSearch">
       <div class="row">
         <div class="col-lg-10">
           <card>
@@ -177,7 +182,7 @@
               </footer>
             </blockquote>
             <div class="float-right" style="padding-top: 10px">
-              <base-button size="sm" type="success" @click="getExample(-1)"
+              <base-button size="sm" type="success" @click="getExample(0)"
                 >switch</base-button
               >
             </div>
@@ -277,29 +282,25 @@ import AppNotFound from "./Notifications/AppNotFound";
 import LineChart from "@/components/Charts/LineChart";
 import PieChart from "@/components/Charts/PieChart";
 import BaseTable from "@/components/BaseTable";
+import AppCard from "@/pages/SearchLoadPage/AppCard";
 import * as chartConfigs from "@/components/Charts/config";
 import config from "@/config";
 
+
+
 export default {
-  components: { BaseAlert, LineChart, PieChart, BaseTable, Modal },
+  components: { BaseAlert, LineChart, PieChart, BaseTable, Modal, AppCard },
   data() {
     return {
       appid: "12345",
-      chooseData:[
-        {id:1},{id:2},{id:3}
-      ],
+      test_list: [1,2,3],
       tableData: [],
       sort: {
         orderRule: ["UI count", "positive count", "negative count", "positive rate", "negative rate"],
         order: 0,
         size: 10,
       },
-      searchOption: {
-        searchInput: "",
-        type: 0,
-        searchRule: ["App Name", "App ID", "Commit ID"],
-        modal: false,
-      },
+      searchContent: "",
       //Pie Chart Test
       chartOptions: {
         hoverBorderWidth: 20,
@@ -321,7 +322,8 @@ export default {
       },
 
       appInfo: {},
-
+      isSearch: false,
+      searchInfo:[],
       exampleData: {
         pos: {},
         neg: {},
@@ -334,6 +336,7 @@ export default {
         gradientColors: config.colors.primaryGradient,
         gradientStops: [1, 0.4, 0],
         extraOptions: chartConfigs.trendChartOptions,
+        
         trendData: {
           datasets: [
             {
@@ -350,12 +353,13 @@ export default {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: [10, 12, 15, 20, 30, 40, 60, 90],
+              data: [],
             },
           ],
-          labels: ["1.0", "1,1", "1,2", "1.3", "1.4", "1.5", "2.0", "2.1"]
+          labels: []
         },
       },
+      
     };
   },
   computed: {
@@ -378,10 +382,14 @@ export default {
     },
     search(appid){
         this.getAppInfo(appid);
-        // this.getAppRankInfo(appid,0);
-        this.searchOption.searchInput = "";
-        this.searchOption.modal = false;
-        // console.log(searchOption.searchInput)
+        this.searchContent = "";
+    },
+    searchJump(appid){
+      this.appid = appid;
+      this.getAppInfo(appid)
+      this.getExample(1);
+      this.getExample(0);
+      this.getAppRankInfo(0);
     },
     notifyVue() {
       this.$notify({
@@ -392,7 +400,7 @@ export default {
         type: "warning",
         timeout: 0,
       });
-      this.searchOption.searchInput = "";
+      this.searchContent = "";
 
     },
     getExample(type) {
@@ -428,7 +436,11 @@ export default {
       var that = this;
       axios.get("/api/app?id=" + appid).then(
         function (response) {
-          if (response.data["meta"]["status"] == 200) {
+          if (response.data["meta"]["status"] == 201){
+            that.isSearch=true;
+            that.searchInfo = response.data["data"]["info"];
+          }else if (response.data["meta"]["status"] == 200) {
+            that.isSearch=false;
             that.appid = response.data["data"]["info"]["appId"];
             var info = response.data["data"]["info"];
             //set app info
@@ -436,44 +448,17 @@ export default {
             //set pie chart data
             that.chartData.datasets[0]["data"] = [info["ui_pos_cnt"], info["ui_neg_cnt"]];
             that.$refs.pie.reloadChart();
-
-            // load 4 version list data for trend chart
-            var i;
-            var data = [], label=[]            
-            //pos rate
-            for (i = 0; i < response.data["data"]["version_pos_rate"].length; i++) { 
-              label.push(response.data["data"]["version_pos_rate"][i][0]);
-              data.push(response.data["data"]["version_pos_rate"][i][1]*100);
-            }
-            that.trendChart.sortData.push({'data':data,'label':label}) 
             
-            // ui cnt
-            data = [], label=[]            
-            for (i = 0; i < response.data["data"]["version_cnt"].length; i++) { 
-              label.push(response.data["data"]["version_cnt"][i][0]);
-              data.push(response.data["data"]["version_cnt"][i][1]);
-            }
-            that.trendChart.sortData.push({'data':data,'label':label}) 
-
-            // pos cnt 
-            data = [], label=[]  
-            for (i = 0; i < response.data["data"]["version_pos_cnt"].length; i++) { 
-              label.push(response.data["data"]["version_pos_cnt"][i][0]);
-              data.push(response.data["data"]["version_pos_cnt"][i][1]);
-            }
-            that.trendChart.sortData.push({'data':data,'label':label}) 
-
-            // neg cnt
-            data = [], label=[]  
-            for (i = 0; i < response.data["data"]["version_neg_cnt"].length; i++) { 
-              label.push(response.data["data"]["version_neg_cnt"][i][0]);
-              data.push(response.data["data"]["version_neg_cnt"][i][1]);
-            }
-            that.trendChart.sortData.push({'data':data,'label':label}) 
+            // load 4 version list data for trend chart
+            var label = response.data["data"]['versions'];
+            that.trendChart.sortData.push({'data':response.data["data"]['version_values']['pos_rate'],'label':label}); 
+            that.trendChart.sortData.push({'data':response.data["data"]['version_values']['cnt'],'label':label}) 
+            that.trendChart.sortData.push({'data':response.data["data"]['version_values']['pos_cnt'],'label':label}) 
+            that.trendChart.sortData.push({'data':response.data["data"]['version_values']['neg_cnt'],'label':label}) 
             that.setTrend(0)
 
             that.getExample(1)
-            that.getExample(-1)
+            that.getExample(0)
             that.getAppRankInfo(0)
           } else {
             that.notifyVue();
@@ -502,7 +487,7 @@ export default {
     //get appid from dashboard page
     this.appid = this.$route.params.id;
     if (this.appid == null) {
-      this.appid = "com.cake.browser";
+      this.appid = "air.com.vudu.air.DownloaderTablet";
     }
 
     this.getAppInfo(this.appid);

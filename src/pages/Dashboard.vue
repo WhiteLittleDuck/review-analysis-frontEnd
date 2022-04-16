@@ -17,10 +17,10 @@
                     <base-dropdown menu-classes="dropdown-black"
                       title-classes="btn btn-secondary"
                       :title="'Rule: '+sort.orderRule[sort.order]">
-                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(0)">UI count</a>
-                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(1)">positive review rate</a>
-                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(2)">negative review rate</a>
-                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(3)">UI related rate</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(0)">UI Count</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(1)">UI Rate</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(2)">Positive Rate</a>
+                      <a href="#/dashboard" class="nav-item dropdown-item" @click="changeSort(3)">negative Rate</a>
                     </base-dropdown>
                     <!--
                      <base-dropdown
@@ -98,7 +98,7 @@
                   </template>
                   <template slot-scope="{ row }">
                     <td class="text-center">{{ row.rank }}</td>
-                    <td class="text-center">{{ row.appId }}</td>
+                    <td class="text-center">{{ row.title }}</td>
                     <td class="text-center">{{ row.ui_cnt }}</td>
                     <td class="text-center">{{ row.ui_pos_cnt }}</td>
                     <td class="text-center">{{ row.ui_neg_cnt }}</td>
@@ -169,7 +169,7 @@ export default {
       appPage: 295,
       keyPage: 11,
       sort:{
-        orderRule: ["UI count", "positive rate", "negative rate", "UI rate"],
+        orderRule: ["UI Count", "UI Rate", "Positive Rate", "Negative Rate"],
         typeRule: ["App Reviews"," UI Keywords"],
         order: 0,
         type: 0,
@@ -272,6 +272,7 @@ export default {
         function (response) {
           if (response.data["meta"]["status"] == 200) {
             that.rankTable.allData=[response.data["data"]["app"],response.data["data"]["key"]];
+            that.rankTable.allData[1]
             that.initRankeTable(that.sort.type);
           }else{
             alert("something goes wrong!");

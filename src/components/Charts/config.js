@@ -78,9 +78,9 @@ export let trendChartOptions = {
         zeroLineColor: "transparent",
       },
       ticks: {
-        min:0,
-        max:100,
-        stepSize: 20,
+        // min:0,
+        // max:100,
+        // stepSize: 20,
         // suggestedMin: 60,
         // suggestedMax: 125,
         padding: 10,

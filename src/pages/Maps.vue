@@ -22,7 +22,7 @@
       <card>
         <h4 class="card-title">{{keywordInfo.keyid}}</h4>
         <h6 class="card-subtitle mb-2 text-muted">In 100 UI control keyword list summarized by Aolei and Yirui</h6>
-
+        <h4 class="card-title"> {{ keyid }}</h4>
         <div class="row">
           <div class="col">
             <p class="card-text">count: {{keywordInfo.ui_cnt}}</p>
@@ -286,9 +286,6 @@ export default {
             that.chartData.datasets[0]["data"]=[info["ui_pos_cnt"],info["ui_neg_cnt"]];
             that.$refs.pie.reloadChart();
 
-            //set pos and neg example
-            // that.exampleData.pos=response.data["data"]["posExample"];
-            // that.exampleData.neg=response.data["data"]["negExample"];
             that.getExample(1)
             that.getExample(-1)
 
